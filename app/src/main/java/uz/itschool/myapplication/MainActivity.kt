@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
     private lateinit var minus:Button
     private var isSimvol=false
     private var isPoint=true
-    override fun onCreate(savedInstanceState: Bundle?) {        super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initui()
         one.setOnClickListener(this)
@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
         }
         clear.setOnClickListener{
             show_num.text="0"
+            show_answer.text="answer"
             isSimvol=false
             isPoint=true
         }
@@ -58,7 +59,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
             if(show_num.text.length!=1) {
             show_num.text = show_num.text.substring(0, show_num.text.length - 1)            }
         else{                show_num.text = show_num.text.substring(0, show_num.text.length - 1)
-            show_num.text = "0"            }
+            show_num.text = "0"
+        }
         }
         div.setOnClickListener{
             addSimvol(div.text.toString())
@@ -71,6 +73,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
         }
         minus.setOnClickListener{
             addSimvol(minus.text.toString())
+        }
+
+        equal.setOnClickListener{
+            var list = createArray(show_num.text.toString())
+            var l = math(list)
+            show_answer.text=math_2(l)
         }
     }
 
@@ -86,9 +94,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
     }
     private fun calculate(): String {
         var r = "answer"
-        var list = createArray(show_num.text.toString())
-        math(list)
-
         return r
     }
     fun addSimvol(simvol:String){
@@ -124,24 +129,90 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
 
 
 
+    var list_to_solve= mutableListOf<Any>()
     fun math(list_problem:MutableList<Any>):MutableList<Any>{
-        var list_new= mutableListOf<Any>()
-        var temp = list_problem[0]
-        for(i in list_problem.indices){
-            list_new.add(list_problem[i])
-            if(list_problem[i]=="*"  || list_problem[i]=="/"){
+
+        var temp = 0f
+
+        var i = 0
+        while (list_problem.contains('*') || list_problem.contains('/')){
+                if(list_problem[i]=='*' || list_problem[i]=='/'){
                 var old:Float = list_problem[i-1] as Float
                 var prev:Float = list_problem[i+1] as Float
                 when(list_problem[i]){
                     '*'->{
                         temp = old*prev
-                        list_new.removeLast()
-                        list_new.add(temp)
+
+                    }
+                    '/'->{
+                        temp = old/prev
                     }
                 }
+                list_problem[i-1] = temp
+                list_problem.removeAt(i)
+                list_problem.removeAt(i)
+                i = i-2
             }
+            i++
         }
-        return list_new
+        list_to_solve=list_problem
+        return list_problem
+    }
+
+    fun math_2(list_problem:MutableList<Any>):String{
+
+        var i = 0
+        var temp = 0f
+        while (list_problem.contains('+') || list_problem.contains('-')){
+            if(list_problem[i]=='+' || list_problem[i]=='-'){
+                var old:Float = list_problem[i-1] as Float
+                var prev:Float = list_problem[i+1] as Float
+                when(list_problem[i]){
+                    '+'->{
+                        temp = old+prev
+
+                    }
+                    '-'->{
+                        temp = old-prev
+                    }
+                }
+                list_problem[i-1] = temp
+                list_problem.removeAt(i)
+                list_problem.removeAt(i)
+                i = i-2
+            }
+            i++
+        }
+
+//            var new = mutableListOf<Any>()
+//            var temp = list_to_solve[0]
+//            new.add(list_to_solve[0])
+//            for (i in list_to_solve.indices) {
+//                if (list_to_solve[i] == '+' || list_to_solve[i] == '-') {
+//                    var old: Float = list_to_solve[i - 1] as Float
+//                    var prev: Float = list_to_solve[i + 1] as Float
+//                    when (list_to_solve[i]) {
+//                        '+' -> {
+//                            temp = old + prev
+//                            new.removeLast()
+//                            new.add(temp)
+//                            temp = 0
+//                        }
+//                    }
+//                    when (list_to_solve[i]) {
+//                        '-' -> {
+//                            temp = old - prev
+//                            new.removeLast()
+//                            new.add(temp)
+//                            temp = 0
+//                        }
+//                    }
+//                }
+//
+//            list_to_solve = new
+//        }
+        var res:String=list_problem[0].toString()
+        return res
     }
 
 
