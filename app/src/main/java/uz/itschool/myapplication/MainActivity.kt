@@ -1,5 +1,6 @@
 package uz.itschool.myapplication
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -26,11 +27,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
     private lateinit var multply:Button
     private lateinit var plus:Button
     private lateinit var minus:Button
+    private lateinit var percentage:Button
     private var isSimvol=false
     private var isPoint=true
+    private var n=""
     override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initui()
+
         one.setOnClickListener(this)
         two.setOnClickListener(this)
         three.setOnClickListener(this)
@@ -54,11 +58,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
             isSimvol=false
             isPoint=true
         }
-
         del.setOnClickListener{
             if(show_num.text.length!=1) {
-            show_num.text = show_num.text.substring(0, show_num.text.length - 1)            }
-        else{                show_num.text = show_num.text.substring(0, show_num.text.length - 1)
+            show_num.text = show_num.text.substring(0, show_num.text.length - 1)
+            }
+        else{
+            show_num.text = show_num.text.substring(0, show_num.text.length - 1)
             show_num.text = "0"
         }
         }
@@ -75,10 +80,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
             addSimvol(minus.text.toString())
         }
 
+        percentage.setOnClickListener {
+            addSimvol(percentage.text.toString())
+        }
+
         equal.setOnClickListener{
             var list = createArray(show_num.text.toString())
-            var l = math(list)
-            show_answer.text=math_2(l)
+            var l1 =percentage(list)
+            var l = math(l1)
+            var list_from_function = (math_2(l))
+            show_answer.text = list_from_function
         }
     }
 
@@ -183,37 +194,34 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
             }
             i++
         }
-
-//            var new = mutableListOf<Any>()
-//            var temp = list_to_solve[0]
-//            new.add(list_to_solve[0])
-//            for (i in list_to_solve.indices) {
-//                if (list_to_solve[i] == '+' || list_to_solve[i] == '-') {
-//                    var old: Float = list_to_solve[i - 1] as Float
-//                    var prev: Float = list_to_solve[i + 1] as Float
-//                    when (list_to_solve[i]) {
-//                        '+' -> {
-//                            temp = old + prev
-//                            new.removeLast()
-//                            new.add(temp)
-//                            temp = 0
-//                        }
-//                    }
-//                    when (list_to_solve[i]) {
-//                        '-' -> {
-//                            temp = old - prev
-//                            new.removeLast()
-//                            new.add(temp)
-//                            temp = 0
-//                        }
-//                    }
-//                }
-//
-//            list_to_solve = new
-//        }
         var res:String=list_problem[0].toString()
+        n=res
         return res
     }
+    fun percentage(list_problem:MutableList<Any>):MutableList<Any>{
+        var i = 0
+        var temp = 0f
+        while (list_problem.contains('%')){
+            if(list_problem[i]=='%'){
+                var old:Float = list_problem[i-1] as Float
+                var prev:Float = list_problem[i+1] as Float
+                when (list_problem[i]){
+                    '%'->{
+                        temp= ((old*prev)/100).toFloat()
+                        list_problem[i]=temp
+                    }
+                }
+                list_problem[i-1] = temp
+                list_problem.removeAt(i)
+                list_problem.removeAt(i)
+                i = i-2
+            }
+            i++
+        }
+        return list_problem
+    }
+
+
 
 
 
@@ -239,4 +247,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
         clear=findViewById(R.id.clear_button)
         plus=findViewById(R.id.plus)
         minus=findViewById(R.id.minus)
+        percentage=findViewById(R.id.percentage)
     }}
