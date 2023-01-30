@@ -1,5 +1,6 @@
 package uz.itschool.myapplication
 import android.os.Bundle
+import android.util.Config.LOGD
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -28,9 +29,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
     private lateinit var plus:Button
     private lateinit var minus:Button
     private lateinit var percentage:Button
+    private lateinit var plus_or_minus:Button
     private var isSimvol=false
     private var isPoint=true
     private var n=""
+    private var k=""
     override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initui()
@@ -84,6 +87,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
             addSimvol(percentage.text.toString())
         }
 
+        plus_or_minus.setOnClickListener {
+            k=show_num.text.substring(show_num.text.length-1, show_num.text.length)
+            show_num.text = show_num.text.substring(0, show_num.text.length - 1) + "(-" + k+")"
+            //4*(-5)
+            //4*5
+        }
+
         equal.setOnClickListener{
             var list = createArray(show_num.text.toString())
             var l1 =percentage(list)
@@ -122,19 +132,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
     fun createArray(s:String):MutableList<Any>{
         var list = mutableListOf<Any>()
         var temp = ""
-        for(i in s){
-            if(i.isDigit() || i=='.'){
-            temp+=i
+        var minus = 1
+//        (-8)
+        for(i in 0.. s.length-1){
+            if (s[i]=='('){
+                minus = -1
             }
-        else{
+            if(s[i].isDigit() || s[i]=='.'){
+            temp+=s[i]
+            }
+
+        else if(s[i-1]!='(' && (s[i]=='+' || s[i]=='-' || s[i]=='*' || s[i]=='/')){
             list.add(temp.toFloat())
-            list.add(i)
+            list.add(s[i])
                 temp=""
         }
         }
         if(temp.isNotEmpty()){
-            list.add(temp.toFloat())
+            var t:Float =  temp.toFloat() *minus
+            minus =1
+            list.add(t)
         }
+
+
+
         return list
     }
 
@@ -248,4 +269,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
         plus=findViewById(R.id.plus)
         minus=findViewById(R.id.minus)
         percentage=findViewById(R.id.percentage)
+        plus_or_minus=findViewById(R.id.plus_or_min)
+
     }}
