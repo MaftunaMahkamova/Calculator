@@ -89,7 +89,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
 
         plus_or_minus.setOnClickListener {
             k=show_num.text.substring(show_num.text.length-1, show_num.text.length)
-            show_num.text = show_num.text.substring(0, show_num.text.length - 1) + "(-" + k+")"
+            if(k.isDigitsOnly()) {
+                show_num.text = show_num.text.substring(0, show_num.text.length - 1) + "(-" + k + ")"
+            }
             //4*(-5)
             //4*5
         }
@@ -107,7 +109,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
         val btn=findViewById<Button>(p0!!.id)
         if(show_num.text!="0"){
             show_num.text=show_num.text.toString()+btn.text
-        }        else{
+        }
+        else{
             show_num.text=btn.text        }
         show_answer.text=calculate()
         isSimvol=true
@@ -138,23 +141,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{    private latei
             if (s[i]=='('){
                 minus = -1
             }
-            if(s[i].isDigit() || s[i]=='.'){
+            else if(s[i].isDigit() || s[i]=='.'){
             temp+=s[i]
             }
 
-        else if(s[i-1]!='(' && (s[i]=='+' || s[i]=='-' || s[i]=='*' || s[i]=='/')){
-            list.add(temp.toFloat())
-            list.add(s[i])
-                temp=""
-        }
+            else if(s[i-1]!='(' && (s[i]=='+' || s[i]=='-' || s[i]=='*' || s[i]=='/')){
+                list.add(temp.toFloat())
+                list.add(s[i])
+                    temp=""
+            }
         }
         if(temp.isNotEmpty()){
             var t:Float =  temp.toFloat() *minus
             minus =1
             list.add(t)
         }
-
-
 
         return list
     }
